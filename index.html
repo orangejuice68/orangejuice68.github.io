@@ -5,9 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My CV - Portfolio</title>
     
+    <!-- นำเข้าฟอนต์ Modern และมีสไตล์จาก Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Prompt:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Prompt:wght@300;400;500;600&family=Source+Code+Pro&display=swap" rel="stylesheet">
     
     <style>
         :root {
@@ -18,9 +19,11 @@
             --accent-color: #111827;
             --link-color: #3b82f6;
             --link-hover: #2563eb;
+            --viewport-bg: #000000;
+            --control-bg: #ffffff;
+            --control-border: #d1d5db;
         }
 
-        /* เปิดใช้งานการเลื่อนหน้าเว็บแบบสมูท */
         html {
             scroll-behavior: smooth;
         }
@@ -31,19 +34,18 @@
             color: var(--text-main);
             line-height: 1.7;
             margin: 0;
-            padding: 100px 20px 50px 20px; /* เพิ่ม padding ด้านบนกันเมนูบัง */
+            padding: 100px 20px 50px 20px;
             display: flex;
             justify-content: center;
         }
 
-        /* แถบเมนูลอยตัว (Floating Nav) */
         .floating-nav {
             position: fixed;
             top: 20px;
             left: 50%;
             transform: translateX(-50%);
             background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px); /* ทำพื้นหลังเบลอๆ สไตล์ Modern */
+            backdrop-filter: blur(10px);
             padding: 12px 30px;
             border-radius: 50px;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
@@ -51,6 +53,8 @@
             gap: 25px;
             z-index: 1000;
             border: 1px solid #f3f4f6;
+            max-width: fit-content;
+            justify-content: center;
         }
 
         .floating-nav a {
@@ -75,7 +79,6 @@
             box-sizing: border-box;
         }
 
-        /* ตั้งระยะห่างตอนเลื่อนลงมาไม่ให้เมนูบังเนื้อหา */
         header, section {
             scroll-margin-top: 100px;
         }
@@ -164,7 +167,210 @@
             color: var(--link-hover);
         }
 
-        /* ปรับเมนูสำหรับมือถือ */
+        .project-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 25px;
+            border-bottom: 1px solid #f3f4f6;
+            padding-bottom: 15px;
+        }
+
+        .project-number {
+            display: inline-block;
+            background-color: #f1f5f9;
+            color: #475569;
+            width: 30px;
+            height: 30px;
+            text-align: center;
+            line-height: 30px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            margin-right: 15px;
+        }
+
+        .project-header h3 {
+            font-size: 1.15rem;
+            font-weight: 500;
+            color: var(--accent-color);
+            margin: 0;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            flex-grow: 1;
+        }
+
+        .project-header-links {
+            display: flex;
+            gap: 15px;
+            font-size: 0.9rem;
+            font-weight: 400;
+        }
+
+        .project-header-links a {
+            color: var(--text-light);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .project-header-links a:hover {
+            color: var(--link-color);
+        }
+
+        .project-demo-box {
+            background-color: #f8fafc;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.01);
+        }
+
+        .rasterizer-demo-label {
+            display: inline-flex;
+            align-items: center;
+            font-size: 0.8rem;
+            color: var(--text-light);
+            font-weight: 300;
+            margin-bottom: 5px;
+        }
+
+        .rasterizer-demo-label:before {
+            content: '🚀';
+            margin-right: 5px;
+        }
+
+        .demo-titles h4 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin: 0 0 20px 0;
+            color: var(--accent-color);
+        }
+
+        .demo-grid {
+            display: grid;
+            grid-template-columns: 2fr 1.5fr;
+            gap: 40px;
+        }
+
+        .demo-left, .demo-right {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .raster-viewport {
+            background-color: var(--viewport-bg);
+            border: 2px solid #374151;
+            border-radius: 8px;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            aspect-ratio: 1 / 1;
+            box-sizing: border-box;
+            margin-bottom: 20px;
+            padding: 0;
+            overflow: hidden;
+        }
+
+        .raster-controls h5 {
+            font-size: 0.95rem;
+            font-weight: 500;
+            margin: 15px 0 10px 0;
+            color: var(--accent-color);
+        }
+
+        .raster-controls h5:first-of-type {
+            margin-top: 0;
+        }
+
+        .control-row {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .raster-controls button {
+            background-color: var(--control-bg);
+            border: 1px solid var(--control-border);
+            border-radius: 8px;
+            padding: 10px;
+            cursor: pointer;
+            color: var(--text-main);
+            font-weight: 500;
+            font-size: 0.9rem;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+            transition: all 0.2s ease;
+        }
+
+        .raster-controls button:hover {
+            border-color: var(--link-color);
+            background-color: #f1f5f9;
+        }
+
+        .raster-controls button svg, .raster-controls button span.icon {
+            font-size: 1.1rem;
+        }
+
+        .keyboard-interaction-box {
+            background-color: #ffffff;
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.02);
+            margin-top: 15px;
+            border: 1px solid #f3f4f6;
+        }
+
+        .keyboard-interaction-box h6 {
+            margin: 0;
+            display: flex;
+            align-items: center;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--accent-color);
+        }
+
+        .keyboard-interaction-box h6:before {
+            content: '💡';
+            margin-right: 5px;
+        }
+
+        .keyboard-interaction-box ul {
+            font-size: 0.85rem;
+            margin: 10px 0 0 0;
+            list-style-type: disc;
+            padding-left: 20px;
+            color: var(--text-main);
+        }
+
+        .keyboard-interaction-box li {
+            margin-bottom: 5px;
+        }
+
+        .keyboard-interaction-box li strong {
+            font-weight: 600;
+            color: var(--accent-color);
+        }
+
+        .source-code-ref {
+            margin-top: 20px;
+            font-size: 0.9rem;
+            color: var(--text-light);
+        }
+
+        .source-code-ref a {
+            font-family: 'Source Code Pro', monospace;
+            background-color: #e2e8f0;
+            border-radius: 4px;
+            padding: 2px 6px;
+            text-decoration: none;
+            color: #111827;
+            font-weight: 400;
+        }
+
         @media (max-width: 600px) {
             .container {
                 padding: 40px 30px;
@@ -181,22 +387,33 @@
             .floating-nav a {
                 font-size: 0.85rem;
             }
+            .project-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+            .project-header h3 {
+                flex-grow: 0;
+                width: 100%;
+            }
+            .demo-grid {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
 <body>
 
-    <!-- แถบเมนูลอยตัว -->
     <nav class="floating-nav">
         <a href="#profile">Profile</a>
         <a href="#education">Education</a>
         <a href="#skills">Skills</a>
         <a href="#portfolio">Portfolio</a>
+        <a href="#software-rasterizer">Project Demo</a>
     </nav>
 
     <div class="container">
         
-        <!-- กำหนด id ให้แต่ละส่วน เพื่อให้เมนูคลิกเลื่อนมาหาได้ -->
         <header id="profile">
             <h1>[ใส่ชื่อ - นามสกุล]</h1>
             <div class="contact-info">
@@ -225,14 +442,82 @@
             <p>ผลงานและการบ้านสำหรับรายวิชา:</p>
             <ul class="project-list">
                 <li>
-                    <a href="#">Transformation with Keyboard Interaction</a>
-                    <div style="font-size: 0.85rem; color: #6b7280; margin-top: 4px;">(รออัปเดตลิงก์ไฟล์)</div>
+                    <a href="#software-rasterizer">Transformation with Keyboard Interaction</a>
+                    <div style="font-size: 0.85rem; color: #6b7280; margin-top: 4px;">(ดูตัวอย่างซอฟต์แวร์แรสเตอร์ไรเซอร์ด้านล่าง)</div>
                 </li>
                 <li>
                     <a href="#">24-bit Sprite (Translate, Rotate, Scale)</a>
-                    <div style="font-size: 0.85rem; color: #6b7280; margin-top: 4px;">(รออัปเดตลิงก์ไฟล์)</div>
+                    <div style="font-size: 0.85rem; color: #6b7280; margin-top: 4px;">(รวมอยู่ในตัวอย่างด้านล่าง)</div>
                 </li>
             </ul>
+        </section>
+
+        <section id="software-rasterizer">
+            <div class="project-header">
+                <span class="project-number">01</span>
+                <h3>Interactive Graphics</h3>
+                <div class="project-header-links">
+                    <!-- อัปเดตลิงก์ไปยังไฟล์ของคุณ -->
+                    <a href="800-1815-raster.html" target="_blank">Interactive Demo</a>
+                    <a href="#skills">Skills</a>
+                    <a href="800-1815-raster.html" target="_blank">Source File</a>
+                </div>
+            </div>
+            
+            <div class="project-demo-box">
+                <div class="demo-titles">
+                    <span class="rasterizer-demo-label">Software Rasterizer Demo</span>
+                    <h4>Pixel-Based Rendering Engine</h4>
+                </div>
+                
+                <div class="demo-grid">
+                    <div class="demo-left">
+                        <div class="raster-viewport">
+                            <!-- ฝังไฟล์งานของคุณลงในกรอบโดยตรง -->
+                            <iframe src="800-1815-raster.html" width="100%" height="100%" style="border: none; background-color: var(--viewport-bg);"></iframe>
+                        </div>
+                        
+                        <div class="raster-controls">
+                            <h5>Translate (Move):</h5>
+                            <div class="control-row">
+                                <button>← L</button>
+                                <button>→ R</button>
+                                <button>↑ U</button>
+                                <button>↓ D</button>
+                            </div>
+                            
+                            <h5>Rotate:</h5>
+                            <div class="control-row">
+                                <button><span class="icon">↺</span> Left</button>
+                                <button><span class="icon">↻</span> Right</button>
+                            </div>
+                            
+                            <h5>Scale:</h5>
+                            <div class="control-row">
+                                <button><span class="icon">⊕</span> Zoom +</button>
+                                <button><span class="icon">⊖</span> Zoom -</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="demo-right">
+                        <h5>About The Project</h5>
+                        <p>This interactive demo showcases a software-based rasterizer that allows users to draw lines on a canvas and manipulate a 24-bit Cat sprite. The project demonstrates fundamental computer graphics concepts such as pixel manipulation, line drawing algorithms, and sprite transformations including translation, rotation, and scaling.</p>
+                        
+                        <div class="keyboard-interaction-box">
+                            <h6>Keyboard Interaction:</h6>
+                            <ul>
+                                <li><strong>Translate (Move):</strong> Arrow Keys (Up / Down / Left / Right)</li>
+                                <li><strong>Rotate:</strong> Q Key (Counter-Clockwise) / E Key (Clockwise)</li>
+                                <li><strong>Scale (Zoom):</strong> + Key (Zoom In) / - Key (Zoom Out)</li>
+                            </ul>
+                        </div>
+                        
+                        <!-- อัปเดตชื่อไฟล์อ้างอิงตรงนี้ -->
+                        <div class="source-code-ref">Source Reference: <a href="800-1815-raster.html" target="_blank">800-1815-raster.html</a></div>
+                    </div>
+                </div>
+            </div>
         </section>
 
     </div>
