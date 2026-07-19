@@ -3,42 +3,193 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My CV - [Srithep Jinadit]</title>
+    <title>My CV - Portfolio</title>
+    
+    <!-- นำเข้าฟอนต์สไตล์ Modern จาก Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Prompt:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
     <style>
-        body { font-family: Arial, sans-serif; line-height: 1.6; margin: 40px; max-width: 800px; }
-        h1 { color: #333; border-bottom: 2px solid #333; padding-bottom: 10px; }
-        h2 { color: #0056b3; }
-        .section { margin-bottom: 20px; }
+        /* กำหนดโทนสีและสไตล์พื้นฐาน */
+        :root {
+            --bg-color: #f9fafb; /* สีหลังขาวอมเทานิดๆ สบายตา */
+            --card-bg: #ffffff;
+            --text-main: #374151; /* สีตัวอักษรเทาเข้ม (ไม่ดำสนิท) */
+            --text-light: #6b7280;
+            --accent-color: #111827;
+            --link-color: #3b82f6; /* สีน้ำเงินสำหรับลิงก์ */
+            --link-hover: #2563eb;
+        }
+
+        body {
+            font-family: 'Prompt', 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.7;
+            margin: 0;
+            padding: 50px 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        /* กล่องเนื้อหากลางหน้าจอ */
+        .container {
+            background-color: var(--card-bg);
+            max-width: 750px;
+            width: 100%;
+            padding: 60px 70px;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03); /* เงาบางๆ ให้ดูมีมิติ */
+            box-sizing: border-box;
+        }
+
+        /* ส่วนหัวเรื่อง (ชื่อ) */
+        header {
+            border-bottom: 1px solid #f3f4f6;
+            padding-bottom: 25px;
+            margin-bottom: 35px;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 600;
+            margin: 0 0 8px 0;
+            color: var(--accent-color);
+            letter-spacing: -0.5px;
+        }
+
+        .contact-info {
+            color: var(--text-light);
+            font-size: 1rem;
+            font-weight: 300;
+        }
+
+        /* ส่วนหัวข้อต่างๆ */
+        section {
+            margin-bottom: 40px;
+        }
+
+        h2 {
+            font-size: 1.15rem;
+            font-weight: 500;
+            color: var(--accent-color);
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        p {
+            margin: 0 0 10px 0;
+            font-weight: 300;
+        }
+
+        /* สไตล์ของป้าย Tag (สำหรับ Skills) */
+        .skills-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .tag {
+            background-color: #f1f5f9;
+            color: #475569;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 400;
+        }
+
+        /* สไตล์ของรายการ (List) */
+        ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .project-list li {
+            margin-bottom: 16px;
+            padding: 15px 20px;
+            background-color: #f8fafc;
+            border-radius: 8px;
+            border-left: 4px solid var(--link-color);
+            transition: transform 0.2s ease;
+        }
+
+        .project-list li:hover {
+            transform: translateX(5px);
+        }
+
+        a {
+            color: var(--link-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        a:hover {
+            color: var(--link-hover);
+        }
+
+        /* รองรับหน้าจอมือถือ */
+        @media (max-width: 600px) {
+            .container {
+                padding: 40px 30px;
+            }
+            h1 {
+                font-size: 2rem;
+            }
+        }
     </style>
 </head>
 <body>
 
-    <h1>Curriculum Vitae (CV)</h1>
-    
-    <div class="section">
-        <h2>ข้อมูลส่วนตัว (Profile)</h2>
-        <p><strong>Name - Lastname:</strong> [Srithep Jinadit]</p>
-        <p><strong>Email:</strong> [srithep.j@ku.th]</p>
-        <p><strong>การศึกษา:</strong> [ใส่ชื่อมหาวิทยาลัยและคณะ]</p>
-    </div>
+    <div class="container">
+        
+        <!-- ส่วนที่ 1: Profile -->
+        <header>
+            <h1>[ใส่ชื่อ - นามสกุล]</h1>
+            <div class="contact-info">
+                อีเมล: [ใส่อีเมล] &nbsp;|&nbsp; GitHub: [ใส่ชื่อผู้ใช้ GitHub]
+            </div>
+        </header>
 
-    <div class="section">
-        <h2>ทักษะ (Skills)</h2>
-        <ul>
-            <li>[ใส่ทักษะ เช่น HTML, CSS, JavaScript]</li>
-            <li>[ใส่ทักษะอื่นๆ]</li>
-        </ul>
-    </div>
+        <!-- ส่วนที่ 2: Education -->
+        <section>
+            <h2>ประวัติการศึกษา</h2>
+            <p><strong>[ใส่ชื่อมหาวิทยาลัย]</strong></p>
+            <p style="color: #6b7280;">คณะ[ใส่ชื่อคณะ] สาขา[ใส่ชื่อสาขา] — (กำลังศึกษา)</p>
+        </section>
 
-    <!-- ส่วนที่โจทย์บังคับ -->
-    <div class="section">
-        <h2>Interactive Computer Graphics</h2>
-        <p>ผลงานสำหรับวิชา Interactive Computer Graphics:</p>
-        <ul>
-            <!-- เดี๋ยวเราจะมาทำลิงก์เชื่อมไปหน้างานชิ้นอื่นๆ ทีหลัง -->
-            <li><a href="#">Transformation with Keyboard Interaction (รอเพิ่มไฟล์)</a></li>
-            <li><a href="#">24-bit Sprite (Translate, Rotate, Scale) (รอเพิ่มไฟล์)</a></li>
-        </ul>
+        <!-- ส่วนที่ 3: Skills -->
+        <section>
+            <h2>ทักษะความสามารถ</h2>
+            <div class="skills-container">
+                <!-- แก้ไขหรือเพิ่มสกิลของคุณตรงนี้ได้เลย -->
+                <span class="tag">HTML / CSS</span>
+                <span class="tag">JavaScript</span>
+                <span class="tag">C / C++</span>
+                <span class="tag">Computer Graphics</span>
+            </div>
+        </section>
+
+        <!-- ส่วนที่ 4: ผลงานวิชา Interactive Computer Graphics (ตามโจทย์) -->
+        <section>
+            <h2>Interactive Computer Graphics</h2>
+            <p>ผลงานและการบ้านสำหรับรายวิชา:</p>
+            <ul class="project-list">
+                <li>
+                    <a href="#">Transformation with Keyboard Interaction</a>
+                    <div style="font-size: 0.85rem; color: #6b7280; margin-top: 4px;">(รออัปเดตลิงก์ไฟล์)</div>
+                </li>
+                <li>
+                    <a href="#">24-bit Sprite (Translate, Rotate, Scale)</a>
+                    <div style="font-size: 0.85rem; color: #6b7280; margin-top: 4px;">(รออัปเดตลิงก์ไฟล์)</div>
+                </li>
+            </ul>
+        </section>
+
     </div>
 
 </body>
