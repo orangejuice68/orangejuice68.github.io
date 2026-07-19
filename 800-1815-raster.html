@@ -314,6 +314,12 @@ function animate() {
   
   //degree += 1; // Increase rotation degree
   drawSprite24Bit(NaiQuagsireSprite24Bit, spriteX, spriteY, degree, scale, scale);
+  if (spriteY < 0) {
+    spriteY = canvas.height; 
+  } 
+  else if (spriteY > canvas.height) {
+    spriteY = 0;            
+  }
   //drawSpriteRotateScale(SusSprite, 100, 100, degree, scale, scale, 0, 0, 255); // Draw a cyan space invader sprite
   ctx.putImageData(imageData, 0, 0);
   requestAnimationFrame(animate);
