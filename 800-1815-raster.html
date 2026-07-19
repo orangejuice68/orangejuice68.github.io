@@ -230,6 +230,8 @@ let previousY = 0;
 let r = 0, g = 0, b = 0, a = 255; // Default color
 let degree = 0;
 let scale = 1;
+let spriteX = 100 ;
+let spriteY = 100;
 
 canvas.addEventListener('click', (event) => {
 
@@ -282,6 +284,21 @@ window.addEventListener('keydown', (event) => {
   else if(event.key === '-') {
     scale -= 0.1;
   }
+  // TRANSLATE
+  else if(event.code === 'KeyW' || event.key === 'ArrowUp') {
+    spriteY -= 5;
+  }
+  else if(event.code === 'KeyS' || event.key === 'ArrowDown') {
+    spriteY += 5;
+  }
+  else if(event.code === 'KeyA' || event.key === 'ArrowLeft') {
+    spriteX -= 5;
+  }
+  else if(event.code === 'KeyD' || event.key === 'ArrowRight') {
+    spriteX += 5;
+
+  }
+
 });
 window.addEventListener('keyup', (event) => {
   console.log('Key up:', event.key);
@@ -296,7 +313,7 @@ function animate() {
   drawRectFilled(0, 0, canvas.width - 1, canvas.height - 1, 255, 255, 255); // Clear the canvas with black
   
   //degree += 1; // Increase rotation degree
-  drawSprite24Bit(NaiQuagsireSprite24Bit, 100, 100, degree, scale, scale);
+  drawSprite24Bit(NaiQuagsireSprite24Bit, spriteX, spriteY, degree, scale, scale);
   //drawSpriteRotateScale(SusSprite, 100, 100, degree, scale, scale, 0, 0, 255); // Draw a cyan space invader sprite
   ctx.putImageData(imageData, 0, 0);
   requestAnimationFrame(animate);
