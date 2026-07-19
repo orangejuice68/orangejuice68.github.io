@@ -196,16 +196,18 @@
 
         /* กรอบ iframe สวยๆ */
         .iframe-wrapper {
+            /* กำหนดขนาดให้ตายตัว หรือเท่ากับขนาด Canvas ของคุณ (สมมติว่างานขนาด 600px) */
+            max-width: 600px; 
             width: 100%;
             aspect-ratio: 1 / 1;
-            border-radius: 16px; /* ปรับขอบให้โค้งมนนิดๆ สวยงาม */
+            border-radius: 16px; 
             overflow: hidden;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.08); /* เงาฟุ้งๆ ให้มีมิติ */
-            background: #ffffff; /* เปลี่ยนพื้นหลังเป็นสีขาวให้เนียนไปกับงาน */
-            border: 2px solid #0f172a; /* ตีเส้นขอบสีดำเข้มให้พอดีเป๊ะ */
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.08); 
+            background: #ffffff; 
+            border: 2px solid #0f172a; 
+            
+            /* จัดให้อยู่กึ่งกลางจอภาพ */
+            margin: 0 auto; 
         }
 
         iframe {
@@ -213,6 +215,7 @@
             height: 100%;
             border: none;
             background: transparent;
+
         }
 
         .btn-link {
