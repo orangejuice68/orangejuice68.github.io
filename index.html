@@ -3,21 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My CV - Portfolio</title>
+    <title>My CV & Portfolio</title>
     
-    <!-- นำเข้าฟอนต์สไตล์ Modern จาก Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Prompt:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Prompt:wght@300;400;500;600&display=swap" rel="stylesheet">
     
     <style>
         :root {
-            --bg-color: #f9fafb;
-            --card-bg: #ffffff;
-            --text-main: #374151;
-            --text-light: #6b7280;
-            --accent-color: #111827;
-            --link-color: #3b82f6;
+            --text-main: #334155;     /* สีเทาเข้ม สบายตากว่าสีดำสนิท */
+            --text-light: #64748b;
+            --accent: #3b82f6;        /* สีน้ำเงินพาสเทล */
+            --bg-light: #ffffff;
+            --bg-alt: #f8fafc;        /* สีพื้นหลังสลับเซสชัน */
         }
 
         html {
@@ -26,94 +24,182 @@
 
         body {
             font-family: 'Prompt', 'Inter', sans-serif;
-            background-color: var(--bg-color);
             color: var(--text-main);
-            line-height: 1.7;
             margin: 0;
-            padding: 100px 20px 50px 20px;
-            display: flex;
-            justify-content: center;
+            padding: 0;
+            line-height: 1.8;
+            background-color: var(--bg-light);
         }
 
-        /* แถบเมนูลอยตัว */
-        .floating-nav {
+        /* เมนูลอยตัวแบบมินิมอล */
+        .navbar {
             position: fixed;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            padding: 12px 30px;
-            border-radius: 50px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-            display: flex;
-            gap: 25px;
+            top: 0;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(8px);
+            padding: 20px 0;
+            text-align: center;
             z-index: 1000;
-            border: 1px solid #f3f4f6;
+            box-shadow: 0 1px 0 rgba(0,0,0,0.05);
         }
 
-        .floating-nav a {
+        .navbar a {
             color: var(--text-main);
             text-decoration: none;
-            font-weight: 500;
+            margin: 0 15px;
             font-size: 0.95rem;
+            font-weight: 500;
             transition: color 0.3s;
         }
 
-        .floating-nav a:hover {
-            color: var(--link-color);
+        .navbar a:hover {
+            color: var(--accent);
         }
 
-        .container {
-            background-color: var(--card-bg);
-            max-width: 800px;
+        /* โครงสร้างหน้าเว็บแบบเต็มจอ (Full Width) */
+        .section {
+            padding: 100px 10%; /* ขยายขอบให้ชิดซ้าย-ขวามากขึ้น */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .section-alt {
+            background-color: var(--bg-alt);
+        }
+
+        .content-wrapper {
+            max-width: 1200px; /* จำกัดความกว้างสูงสุดให้อ่านง่าย แต่ยังดูกว้างอยู่ */
             width: 100%;
-            padding: 60px 70px;
-            border-radius: 16px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
-            box-sizing: border-box;
         }
 
-        header, section { scroll-margin-top: 100px; }
-
-        header {
-            border-bottom: 1px solid #f3f4f6;
-            padding-bottom: 25px;
-            margin-bottom: 35px;
+        /* ส่วน Header Profile */
+        .hero {
+            padding-top: 150px;
+            text-align: left;
         }
 
-        h1 {
-            font-size: 2.5rem;
+        .hero h1 {
+            font-size: 3.5rem;
             font-weight: 600;
-            margin: 0 0 8px 0;
-            color: var(--accent-color);
-            letter-spacing: -0.5px;
+            margin: 0 0 10px 0;
+            letter-spacing: -1px;
+            color: #0f172a;
         }
 
-        .contact-info { color: var(--text-light); font-size: 1rem; font-weight: 300; }
-        section { margin-bottom: 40px; }
-        
-        h2 {
-            font-size: 1.15rem;
+        .hero p {
+            font-size: 1.2rem;
+            color: var(--text-light);
+            margin: 0;
+        }
+
+        /* หัวข้อ Section */
+        h2.section-title {
+            font-size: 1.8rem;
             font-weight: 500;
-            color: var(--accent-color);
-            margin-bottom: 15px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+            margin-bottom: 40px;
+            position: relative;
+            display: inline-block;
         }
-        p { margin: 0 0 10px 0; font-weight: 300; }
 
-        .skills-container { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 15px; }
-        .tag { background-color: #f1f5f9; color: #475569; padding: 6px 16px; border-radius: 20px; font-size: 0.9rem; }
+        h2.section-title::after {
+            content: '';
+            position: absolute;
+            width: 40px;
+            height: 3px;
+            background-color: var(--accent);
+            bottom: -10px;
+            left: 0;
+            border-radius: 2px;
+        }
 
-        /* ========================================= */
-        /* โค้ดกรอบ iframe ที่ปรับให้รัดพอดีเป๊ะตามรูป */
-        /* ========================================= */
+        /* ส่วนกล่องข้อมูล (Education & Skills) */
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .info-box {
+            background: #fff;
+            padding: 30px;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .skills-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .tag {
+            background: #f1f5f9;
+            color: #475569;
+            padding: 8px 16px;
+            border-radius: 30px;
+            font-size: 0.9rem;
+        }
+
+        /* ส่วนผลงาน (Project Demo) สไตล์มินิมอล */
+        .project-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 50px;
+            align-items: center;
+        }
+
+        .project-info h3 {
+            font-size: 2rem;
+            margin: 0 0 15px 0;
+            color: #0f172a;
+        }
+
+        .project-info p {
+            color: var(--text-light);
+            margin-bottom: 30px;
+        }
+
+        /* เปลี่ยนปุ่มเยอะๆ เป็น Badge คลีนๆ */
+        .control-guide {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .control-item {
+            display: flex;
+            align-items: center;
+            background: #fff;
+            padding: 12px 20px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .control-item strong {
+            width: 100px;
+            color: #0f172a;
+        }
+
+        .key-badge {
+            background: #f1f5f9;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            margin-right: 5px;
+            font-family: 'Inter', monospace;
+            color: #475569;
+        }
+
+        /* กรอบ iframe สวยๆ */
         .iframe-wrapper {
             width: fit-content; 
-            margin: 20px auto; 
-            border: 2px solid #000000; /* กรอบสีดำ */
-            border-radius: 8px; /* ขอบมนเล็กน้อย */
+            margin: 0 auto; 
+            border: 2px solid #000000; 
+            border-radius: 8px; 
             overflow: hidden; 
             background-color: #ffffff;
             display: flex; 
@@ -125,69 +211,125 @@
             border: none;
             margin: 0;
             padding: 0;
+        
+
         }
 
-        @media (max-width: 600px) {
-            .container { padding: 40px 30px; }
-            h1 { font-size: 2rem; }
-            .floating-nav { width: 90%; justify-content: space-around; padding: 12px 15px; gap: 10px; }
-            .floating-nav a { font-size: 0.85rem; }
-            .iframe-wrapper { width: 100%; }
-            iframe { width: 100%; height: auto; aspect-ratio: 1/1; }
+        .btn-link {
+            display: inline-block;
+            margin-top: 30px;
+            padding: 10px 25px;
+            background-color: #0f172a;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 30px;
+            font-weight: 500;
+            transition: background 0.3s;
+        }
+
+        .btn-link:hover {
+            background-color: var(--accent);
+        }
+
+        /* รองรับมือถือ */
+        @media (max-width: 768px) {
+            .section { padding: 80px 5%; }
+            .hero h1 { font-size: 2.5rem; }
+            .info-grid, .project-container { grid-template-columns: 1fr; }
+            .navbar a { margin: 0 10px; font-size: 0.85rem; }
         }
     </style>
 </head>
 <body>
 
-    <nav class="floating-nav">
+    <!-- แถบเมนูแบบมินิมอล -->
+    <nav class="navbar">
         <a href="#profile">Profile</a>
-        <a href="#education">Education</a>
-        <a href="#skills">Skills</a>
-        <a href="#portfolio">Portfolio</a>
+        <a href="#details">Details</a>
+        <a href="#project">Interactive Demo</a>
     </nav>
 
-    <div class="container">
-        
-        <header id="profile">
+    <!-- ส่วนที่ 1: Profile (เต็มจอด้านบน) -->
+    <section id="profile" class="section hero">
+        <div class="content-wrapper">
             <h1>[ใส่ชื่อ - นามสกุล]</h1>
-            <div class="contact-info">
-                อีเมล: [ใส่อีเมล] &nbsp;|&nbsp; GitHub: [ใส่ชื่อผู้ใช้ GitHub]
-            </div>
-        </header>
+            <p>Computer Science Student & Web Developer</p>
+            <p style="margin-top: 20px; font-size: 1rem;">
+                Email: [ใส่อีเมล] &nbsp;|&nbsp; GitHub: [ใส่ชื่อไอดี]
+            </p>
+        </div>
+    </section>
 
-        <section id="education">
-            <h2>ประวัติการศึกษา</h2>
-            <p><strong>[ใส่ชื่อมหาวิทยาลัย]</strong></p>
-            <p style="color: #6b7280;">คณะ[ใส่ชื่อคณะ] สาขา[ใส่ชื่อสาขา]</p>
-        </section>
-
-        <section id="skills">
-            <h2>ทักษะความสามารถ</h2>
-            <div class="skills-container">
-                <span class="tag">HTML / CSS</span>
-                <span class="tag">JavaScript</span>
-                <span class="tag">C / C++</span>
-                <span class="tag">Computer Graphics</span>
-            </div>
-        </section>
-
-        <section id="portfolio">
-            <h2>Interactive Computer Graphics</h2>
-            <p>ผลงานและการบ้านสำหรับรายวิชา:</p>
+    <!-- ส่วนที่ 2: ข้อมูลการศึกษาและทักษะ -->
+    <section id="details" class="section section-alt">
+        <div class="content-wrapper">
+            <h2 class="section-title">About Me</h2>
             
-            <h3 style="font-size: 1rem; color: #475569; margin-top: 30px;">1. 24-bit Sprite (Translate, Rotate, Scale)</h3>
-            
-            <!-- ส่วนกล่องแสดงผลงาน (เปลี่ยนขนาด width/height ให้ตรงกับงานของคุณ) -->
-            <div class="iframe-wrapper">
-                <iframe src="800-1815-raster.html" width="800" height="800" scrolling="no" title="Sprite Demo"></iframe>
+            <div class="info-grid">
+                <div class="info-box">
+                    <h3 style="margin-top:0;">Education</h3>
+                    <p><strong>[ใส่ชื่อมหาวิทยาลัย]</strong></p>
+                    <p style="color: var(--text-light);">คณะ[ใส่ชื่อคณะ] สาขา[ใส่ชื่อสาขา]</p>
+                </div>
+                
+                <div class="info-box">
+                    <h3 style="margin-top:0;">Skills</h3>
+                    <div class="skills-tags">
+                        <span class="tag">HTML / CSS</span>
+                        <span class="tag">JavaScript</span>
+                        <span class="tag">C++</span>
+                        <span class="tag">Computer Graphics</span>
+                    </div>
+                </div>
             </div>
+        </div>
+    </section>
 
-            <h3 style="font-size: 1rem; color: #475569; margin-top: 40px;">2. Transformation with Keyboard Interaction</h3>
-            <p style="font-size: 0.9rem; color: #6b7280;">(รอเพิ่มไฟล์ / แปะลิงก์ที่นี่)</p>
+    <!-- ส่วนที่ 3: ผลงาน (ปรับดีไซน์ใหม่ให้คลีน สบายตา) -->
+    <section id="project" class="section">
+        <div class="content-wrapper">
+            <h2 class="section-title">Computer Graphics Project</h2>
+            
+            <div class="project-container">
+                
+                <!-- ฝั่งซ้าย: คำอธิบายและวิธีบังคับ (เปลี่ยนจากปุ่มเยอะๆ เป็นลิสต์สวยๆ) -->
+                <div class="project-info">
+                    <h3>24-bit Sprite Rendering</h3>
+                    <p>
+                        ผลงานสำหรับวิชา Interactive Computer Graphics แสดงการทำงานของ Software Rasterizer 
+                        ที่สามารถวาดและจัดการกราฟิกแบบพิกเซล รองรับการโต้ตอบผ่านคีย์บอร์ด (Transformation)
+                    </p>
+                    
+                    <div class="control-guide">
+                        <div class="control-item">
+                            <strong>Move:</strong> 
+                            <span><span class="key-badge">↑</span><span class="key-badge">↓</span><span class="key-badge">←</span><span class="key-badge">→</span> Arrow Keys</span>
+                        </div>
+                        <div class="control-item">
+                            <strong>Rotate:</strong> 
+                            <span><span class="key-badge">4</span> Left / <span class="key-badge">6</span> Right</span>
+                        </div>
+                        <div class="control-item">
+                            <strong>Scale:</strong> 
+                            <span><span class="key-badge">+</span> Zoom In / <span class="key-badge">-</span> Zoom Out</span>
+                        </div>
+                    </div>
 
-        </section>
+                    <a href="800-1815-raster.html" target="_blank" class="btn-link">View Source Code</a>
+                </div>
 
-    </div>
+                <!-- ฝั่งขวา: กรอบแสดงผลงาน -->
+                <div class="iframe-wrapper">
+                    <!-- ลิงก์ไฟล์งานของคุณถูกใส่ไว้ตรงนี้แล้ว -->
+                    <iframe src="800-1815-raster.html" title="Interactive Graphics Demo"></iframe>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+</body>
+</html>
 
 </body>
 </html>
