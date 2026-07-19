@@ -5,21 +5,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My CV - Portfolio</title>
     
-    <!-- นำเข้าฟอนต์สไตล์ Modern จาก Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Prompt:wght@300;400;500;600&display=swap" rel="stylesheet">
     
     <style>
-        /* กำหนดโทนสีและสไตล์พื้นฐาน */
         :root {
-            --bg-color: #f9fafb; /* สีหลังขาวอมเทานิดๆ สบายตา */
+            --bg-color: #f9fafb;
             --card-bg: #ffffff;
-            --text-main: #374151; /* สีตัวอักษรเทาเข้ม (ไม่ดำสนิท) */
+            --text-main: #374151;
             --text-light: #6b7280;
             --accent-color: #111827;
-            --link-color: #3b82f6; /* สีน้ำเงินสำหรับลิงก์ */
+            --link-color: #3b82f6;
             --link-hover: #2563eb;
+        }
+
+        /* เปิดใช้งานการเลื่อนหน้าเว็บแบบสมูท */
+        html {
+            scroll-behavior: smooth;
         }
 
         body {
@@ -28,23 +31,55 @@
             color: var(--text-main);
             line-height: 1.7;
             margin: 0;
-            padding: 50px 20px;
+            padding: 100px 20px 50px 20px; /* เพิ่ม padding ด้านบนกันเมนูบัง */
             display: flex;
             justify-content: center;
         }
 
-        /* กล่องเนื้อหากลางหน้าจอ */
+        /* แถบเมนูลอยตัว (Floating Nav) */
+        .floating-nav {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px); /* ทำพื้นหลังเบลอๆ สไตล์ Modern */
+            padding: 12px 30px;
+            border-radius: 50px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            display: flex;
+            gap: 25px;
+            z-index: 1000;
+            border: 1px solid #f3f4f6;
+        }
+
+        .floating-nav a {
+            color: var(--text-main);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.95rem;
+            transition: color 0.3s;
+        }
+
+        .floating-nav a:hover {
+            color: var(--link-color);
+        }
+
         .container {
             background-color: var(--card-bg);
             max-width: 750px;
             width: 100%;
             padding: 60px 70px;
             border-radius: 16px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03); /* เงาบางๆ ให้ดูมีมิติ */
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
             box-sizing: border-box;
         }
 
-        /* ส่วนหัวเรื่อง (ชื่อ) */
+        /* ตั้งระยะห่างตอนเลื่อนลงมาไม่ให้เมนูบังเนื้อหา */
+        header, section {
+            scroll-margin-top: 100px;
+        }
+
         header {
             border-bottom: 1px solid #f3f4f6;
             padding-bottom: 25px;
@@ -65,7 +100,6 @@
             font-weight: 300;
         }
 
-        /* ส่วนหัวข้อต่างๆ */
         section {
             margin-bottom: 40px;
         }
@@ -84,7 +118,6 @@
             font-weight: 300;
         }
 
-        /* สไตล์ของป้าย Tag (สำหรับ Skills) */
         .skills-container {
             display: flex;
             flex-wrap: wrap;
@@ -101,7 +134,6 @@
             font-weight: 400;
         }
 
-        /* สไตล์ของรายการ (List) */
         ul {
             list-style: none;
             padding: 0;
@@ -121,18 +153,18 @@
             transform: translateX(5px);
         }
 
-        a {
+        .project-list a {
             color: var(--link-color);
             text-decoration: none;
             font-weight: 500;
             transition: color 0.2s;
         }
 
-        a:hover {
+        .project-list a:hover {
             color: var(--link-hover);
         }
 
-        /* รองรับหน้าจอมือถือ */
+        /* ปรับเมนูสำหรับมือถือ */
         @media (max-width: 600px) {
             .container {
                 padding: 40px 30px;
@@ -140,33 +172,47 @@
             h1 {
                 font-size: 2rem;
             }
+            .floating-nav {
+                width: 90%;
+                justify-content: space-around;
+                padding: 12px 15px;
+                gap: 10px;
+            }
+            .floating-nav a {
+                font-size: 0.85rem;
+            }
         }
     </style>
 </head>
 <body>
 
+    <!-- แถบเมนูลอยตัว -->
+    <nav class="floating-nav">
+        <a href="#profile">Profile</a>
+        <a href="#education">Education</a>
+        <a href="#skills">Skills</a>
+        <a href="#portfolio">Portfolio</a>
+    </nav>
+
     <div class="container">
         
-        <!-- ส่วนที่ 1: Profile -->
-        <header>
+        <!-- กำหนด id ให้แต่ละส่วน เพื่อให้เมนูคลิกเลื่อนมาหาได้ -->
+        <header id="profile">
             <h1>[ใส่ชื่อ - นามสกุล]</h1>
             <div class="contact-info">
                 อีเมล: [ใส่อีเมล] &nbsp;|&nbsp; GitHub: [ใส่ชื่อผู้ใช้ GitHub]
             </div>
         </header>
 
-        <!-- ส่วนที่ 2: Education -->
-        <section>
+        <section id="education">
             <h2>ประวัติการศึกษา</h2>
             <p><strong>[ใส่ชื่อมหาวิทยาลัย]</strong></p>
             <p style="color: #6b7280;">คณะ[ใส่ชื่อคณะ] สาขา[ใส่ชื่อสาขา] — (กำลังศึกษา)</p>
         </section>
 
-        <!-- ส่วนที่ 3: Skills -->
-        <section>
+        <section id="skills">
             <h2>ทักษะความสามารถ</h2>
             <div class="skills-container">
-                <!-- แก้ไขหรือเพิ่มสกิลของคุณตรงนี้ได้เลย -->
                 <span class="tag">HTML / CSS</span>
                 <span class="tag">JavaScript</span>
                 <span class="tag">C / C++</span>
@@ -174,8 +220,7 @@
             </div>
         </section>
 
-        <!-- ส่วนที่ 4: ผลงานวิชา Interactive Computer Graphics (ตามโจทย์) -->
-        <section>
+        <section id="portfolio">
             <h2>Interactive Computer Graphics</h2>
             <p>ผลงานและการบ้านสำหรับรายวิชา:</p>
             <ul class="project-list">
