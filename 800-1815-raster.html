@@ -1,415 +1,331 @@
-<!DOCTYPE html>
-<html lang="th">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Interactive Computer Graphics</title>
-    
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Prompt:wght@300;400;500;600&display=swap" rel="stylesheet">
-    
-    <style>
-        :root {
-            --text-main: #334155;     /* สีเทาเข้ม สบายตากว่าสีดำสนิท */
-            --text-light: #64748b;
-            --accent: #3b82f6;        /* สีน้ำเงินพาสเทล */
-            --bg-light: #ffffff;
-            --bg-alt: #f8fafc;        /* สีพื้นหลังสลับเซสชัน */
-        }
-
-        html {
-            scroll-behavior: smooth;
-        }
-
-        body {
-            font-family: 'Prompt', 'Inter', sans-serif;
-            color: var(--text-main);
-            margin: 0;
-            padding: 0;
-            line-height: 1.8;
-            background-color: var(--bg-light);
-        }
-
-        /* เมนูลอยตัวแบบมินิมอล */
-        .navbar {
-            position: fixed;
-            top: 0;
-            width: 100%;
-            background: rgba(255, 255, 255, 0.9);
-            backdrop-filter: blur(8px);
-            padding: 20px 0;
-            text-align: center;
-            z-index: 1000;
-            box-shadow: 0 1px 0 rgba(0,0,0,0.05);
-        }
-
-        .navbar a {
-            color: var(--text-main);
-            text-decoration: none;
-            margin: 0 15px;
-            font-size: 0.95rem;
-            font-weight: 500;
-            transition: color 0.3s;
-        }
-
-        .navbar a:hover {
-            color: var(--accent);
-        }
-
-        /* โครงสร้างหน้าเว็บแบบเต็มจอ (Full Width) */
-        .section {
-            padding: 100px 10%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .section-alt {
-            background-color: var(--bg-alt);
-        }
-
-        .content-wrapper {
-            max-width: 1200px;
-            width: 100%;
-        }
-
-        /* ส่วน Header Profile */
-        .hero {
-            padding-top: 150px;
-            text-align: left;
-        }
-
-        .hero h1 {
-            font-size: 3.5rem;
-            font-weight: 600;
-            margin: 0 0 10px 0;
-            letter-spacing: -1px;
-            color: #0f172a;
-        }
-
-        .hero p {
-            font-size: 1.2rem;
-            color: var(--text-light);
-            margin: 0;
-        }
-
-        /* หัวข้อ Section */
-        h2.section-title {
-            font-size: 1.8rem;
-            font-weight: 500;
-            margin-bottom: 40px;
-            position: relative;
-            display: inline-block;
-        }
-
-        h2.section-title::after {
-            content: '';
-            position: absolute;
-            width: 40px;
-            height: 3px;
-            background-color: var(--accent);
-            bottom: -10px;
-            left: 0;
-            border-radius: 2px;
-        }
-
-        /* ส่วนกล่องข้อมูล (Education & Skills) */
-        .info-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 40px;
-            margin-bottom: 40px;
-        }
-
-        .info-box {
-            background: #fff;
-            padding: 30px;
-            border-radius: 12px;
-            border: 1px solid #e2e8f0;
-            transition: box-shadow 0.3s ease;
-        }
-
-        .info-box:hover {
-            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
-        }
-
-        .skills-tags {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-top: 15px;
-        }
-
-        .tag {
-            background: #f1f5f9;
-            color: #475569;
-            padding: 8px 16px;
-            border-radius: 30px;
-            font-size: 0.9rem;
-        }
-
-        /* ส่วนผลงาน (Project Demo) สไตล์มินิมอล */
-        .project-container {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 50px;
-            align-items: center;
-        }
-
-        .project-info h3 {
-            font-size: 2rem;
-            margin: 0 0 15px 0;
-            color: #0f172a;
-        }
-
-        .project-info p {
-            color: var(--text-light);
-            margin-bottom: 30px;
-        }
-
-        /* Badge ควบคุม */
-        .control-guide {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-
-        .control-item {
-            display: flex;
-            align-items: center;
-            background: #fff;
-            padding: 12px 20px;
-            border-radius: 8px;
-            border: 1px solid #e2e8f0;
-        }
-
-        .control-item strong {
-            width: 100px;
-            color: #0f172a;
-        }
-
-        .key-badge {
-            background: #f1f5f9;
-            padding: 4px 10px;
-            border-radius: 6px;
-            font-size: 0.85rem;
-            margin-right: 5px;
-            font-family: 'Inter', monospace;
-            color: #475569;
-        }
-
-        /* กรอบ iframe */
-        .iframe-wrapper {
-            width: 100%;
-            max-width: 775px; 
-            height: 525px; 
-            margin: 0 auto; 
-            border: 2px solid #e2e8f0; 
-            border-radius: 8px; 
-            overflow: hidden; 
-            background-color: #ffffff;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05); 
-        }
-
-        iframe {
-            width: 100%;
-            height: 100%;
-            display: block;
-            border: none;
-            margin: 0;
-            padding: 0;
-            overflow: hidden;
-        }
-
-        .btn-link {
-            display: inline-block;
-            margin-top: 30px;
-            padding: 10px 25px;
-            background-color: #0f172a;
-            color: #fff;
-            text-decoration: none;
-            border-radius: 30px;
-            font-weight: 500;
-            transition: background 0.3s;
-        }
-
-        .btn-link:hover {
-            background-color: var(--accent);
-        }
-
-        /* ดีไซน์ส่วน Action Card สำหรับ Source Code ที่ปรับให้เข้ากับเว็บ */
-        .source-card-container {
-            width: 100%;
-            display: flex;
-            justify-content: center;
-            margin-top: 60px;
-        }
-
-        .action-card {
-            background: #fff;
-            border: 1px solid #e2e8f0;
-            border-radius: 12px;
-            padding: 40px;
-            text-align: center;
-            max-width: 600px;
-            width: 100%;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.02);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .action-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.06);
-        }
-
-        .action-card h3 {
-            font-size: 1.5rem;
-            color: #0f172a;
-            margin-top: 0;
-            margin-bottom: 15px;
-        }
-
-        .action-card p {
-            color: var(--text-light);
-            margin-bottom: 25px;
-            font-size: 1rem;
-            line-height: 1.6;
-        }
-
-        /* ปุ่มแบบโปร่ง (Outline Button) สไตล์คลีนๆ */
-        .btn-outline {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            padding: 12px 28px;
-            border: 2px solid var(--accent);
-            color: var(--accent);
-            background: transparent;
-            text-decoration: none;
-            border-radius: 30px;
-            font-weight: 500;
-            transition: all 0.3s ease;
-        }
-
-        .btn-outline:hover {
-            background-color: var(--accent);
-            color: #fff;
-        }
-
-        .btn-outline svg {
-            width: 18px;
-            height: 18px;
-        }
-
-        /* รองรับมือถือ */
-        @media (max-width: 768px) {
-            .section { padding: 80px 5%; }
-            .hero h1 { font-size: 2.5rem; }
-            .info-grid, .project-container { grid-template-columns: 1fr; }
-            .navbar a { margin: 0 10px; font-size: 0.85rem; }
-            .action-card { padding: 30px 20px; }
-        }
-    </style>
+<title>Raster Graphics</title>
 </head>
 <body>
 
-    <nav class="navbar">
-        <a href="#profile">Profile</a>
-        <a href="#details">Details</a>
-        <a href="#project">Interactive Demo</a>
-    </nav>
 
-    <section id="profile" class="section hero">
-        <div class="content-wrapper">
-            <h1>Srithep - Jinadit</h1>
-            <p>Computer Science Student & Web Developer</p>
-            <p style="margin-top: 20px; font-size: 1rem;">
-                Email: Srithep.j@ku.th &nbsp;|&nbsp; GitHub: Orangejuice68
-            </p>
-        </div>
-    </section>
+<canvas id="canvas" width="200" height="200"
+style="width:500px; height:500px; border:1px solid #000; image-rendering: pixelated;">
+</canvas>
 
-    <section id="details" class="section section-alt">
-        <div class="content-wrapper">
-            <h2 class="section-title">About Me</h2>
-            
-            <div class="info-grid">
-                <div class="info-box">
-                    <h3 style="margin-top:0;">Education</h3>
-                    <p><strong>Kasetsart University</strong></p>
-                    <p style="color: var(--text-light);">Faculty: Bachelor of Science Program Major: Computer Science</p>
-                </div>
-                
-                <div class="info-box">
-                    <h3 style="margin-top:0;">Skills</h3>
-                    <div class="skills-tags">
-                        <span class="tag">HTML / CSS</span>
-                        <span class="tag">JavaScript</span>
-                        <span class="tag">C++</span>
-                        <span class="tag">Computer Graphics</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+<script>
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+const imageData = ctx.createImageData(canvas.width, canvas.height);
+const pixels = imageData.data; // Array of color [R,G,B,A, R,G,B,A, ...]
 
-    <section id="project" class="section">
-        <div class="content-wrapper">
-            <h2 class="section-title">Computer Graphics Project</h2>
-            
-            <div class="project-container">
-                
-                <div class="project-info">
-                    <h3>24-bit Sprite Rendering</h3>
-                    <p>
-                        ผลงานสำหรับวิชา Interactive Computer Graphics แสดงการทำงานของ Software Rasterizer 
-                        ที่สามารถวาดและจัดการกราฟิกแบบพิกเซล รองรับการโต้ตอบผ่านคีย์บอร์ด (Transformation)
-                    </p>
-                    
-                    <div class="control-guide">
-                        <div class="control-item">
-                            <strong>Move:</strong> 
-                            <span><span class="key-badge">↑</span><span class="key-badge">↓</span><span class="key-badge">←</span><span class="key-badge">→</span> Arrow Keys</span>
-                        </div>
-                        <div class="control-item">
-                            <strong>Rotate:</strong> 
-                            <span><span class="key-badge">4</span> Left / <span class="key-badge">6</span> Right</span>
-                        </div>
-                        <div class="control-item">
-                            <strong>Scale:</strong> 
-                            <span><span class="key-badge">+</span> Zoom In / <span class="key-badge">-</span> Zoom Out</span>
-                        </div>
-                    </div>
+function putPixel(x, y, r, g, b, a = 255) {
+  const idx = (y * canvas.width + x) * 4; // หา index แรกของ pixel (x,y)
+  pixels[idx] = r;
+  pixels[idx + 1] = g;
+  pixels[idx + 2] = b;
+  pixels[idx + 3] = a;
+}
+function drawLine(x1, y1, x2, y2, r, g, b, a = 255) {
+  const dx = Math.abs(x2 - x1);
+  const dy = Math.abs(y2 - y1);
 
-                    <!-- ปุ่ม View Source Code อันเดิม (คุณสามารถเก็บไว้หรือลบออกก็ได้ถ้ามีกล่องการ์ดด้านล่างแล้ว) -->
-                    <a href="800-1815-raster.html" target="_blank" class="btn-link">View Source Code</a>
-                </div>
+  if(dx > dy) {
+    const m = (y2 - y1) / (x2 - x1);
+    const c = y1 - m * x1;
+    for (let x = Math.min(x1, x2); x <= Math.max(x1, x2); x++) {
+      const y = Math.round(m * x + c);
+      putPixel(x, y, r, g, b, a);
+    }
+  } else {
+    const m = (x2 - x1) / (y2 - y1);
+    const c = x1 - m * y1;
+    for (let y = Math.min(y1, y2); y <= Math.max(y1, y2); y++) {
+      const x = Math.round(m * y + c);
+      putPixel(x, y, r, g, b, a);
+    }
+  }
+}
+function drawRect(x1, y1, x2, y2, r, g, b, a = 255) {
+  drawLine(x1, y1, x2, y1, r, g, b, a); // Top edge
+  drawLine(x2, y1, x2, y2, r, g, b, a); // Right edge
+  drawLine(x2, y2, x1, y2, r, g, b, a); // Bottom edge
+  drawLine(x1, y2, x1, y1, r, g, b, a); // Left edge
+}
+function drawRectFilled(x1, y1, x2, y2, r, g, b, a = 255) {
+  for (let y = y1; y <= y2; y++) {
+    for (let x = x1; x <= x2; x++) {
+      putPixel(x, y, r, g, b, a);
+    }
+  }
+}
+function drawRectGradient(x1, y1, x2, y2, r1, g1, b1, r2, g2, b2) {
+  for (let y = y1; y <= y2; y++) {
+    const t = (y - y1) / (y2 - y1);
+    const r = Math.round(r1 * (1 - t) + r2 * t);
+    const g = Math.round(g1 * (1 - t) + g2 * t);
+    const b = Math.round(b1 * (1 - t) + b2 * t);
+    for (let x = x1; x <= x2; x++) {
+      putPixel(x, y, r, g, b);
+    }
+  }
+}
+function drawEllipse(cx, cy, rx, ry, r, g, b, a = 255) {
+  for (let y = -ry; y <= ry; y++) {
+    for (let x = -rx; x <= rx; x++) {
+      if ((x * x) / (rx * rx) + (y * y) / (ry * ry) <= 1) {
+        putPixel(cx + x, cy + y, r, g, b, a);
+      }
+    }
+  }
+}
+function drawSprite(sprite, x, y, r, g, b, a = 255) {
+  for (let j = 0; j < sprite.length; j++) {
+    for (let i = 0; i < sprite[j].length; i++) {
+      if (sprite[j][i] === 1) {
+        putPixel(x + i, y + j, r, g, b, a);
+      }
+    }
+  }
+}
+function drawSpriteRotateScale(sprite, x, y, degree, scaleX, scaleY, r, g, b, a = 255) {
+  for (let j = 0; j < sprite.length; j++) {
+    for (let i = 0; i < sprite[j].length; i++) {
+      if (sprite[j][i] === 1) {
+        
+        // Center the pixel coordinates
+        const cX = i - (sprite[j].length / 2);
+        const cY = j - (sprite.length / 2);
+        // Rotate
+        const rad = degree * Math.PI / 180;
+        const x_rotated = Math.round(cX * Math.cos(rad) - cY * Math.sin(rad));
+        const y_rotated = Math.round(cX * Math.sin(rad) + cY * Math.cos(rad));
 
-                <div class="iframe-wrapper">
-                    <iframe src="800-1815-raster.html" title="Interactive Graphics Demo"></iframe>
-                </div>
+        // Scale
+        const x_rotated_scaled = Math.round(x_rotated * scaleX);
+        const y_rotated_scaled = Math.round(y_rotated * scaleY);
 
-            </div>
+        //putPixel(x + x_rotated_scaled, y + y_rotated_scaled, r, g, b, a);
+        drawEllipse(x + x_rotated_scaled, y + y_rotated_scaled, Math.round(scaleX), Math.round(scaleY), r, g, b, a); // Draw a small ellipse instead of a pixel
+      }
+    }
+  }
+}
+function drawSprite24Bit(sprite, x, y, degree, scaleX, scaleY) {
+  for (let j = 0; j < sprite.length; j++) {
+    for (let i = 0; i < sprite[j].length; i++) {
+      const color = sprite[j][i];
 
-            <!-- ส่วน Source Code Card ที่ปรับดีไซน์ใหม่ให้เข้ากับธีมเว็บ -->
-            <div class="source-card-container">
-                <div class="action-card">
-                    <h3>Explore Source Code</h3>
-                    <p>Click the button below to view the raw project file and explore the full computer graphics logic on GitHub Pages.</p>
-                    
-                    <a href="https://orangejuice68.github.io/800-1815-raster.html" target="_blank" class="btn-outline">
-                        Open GitHub Pages
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                        </svg>
-                    </a>
-                </div>
-            </div>
+      if (color !== null) {
+        const r = (color >> 16) & 255;
+        const g = (color >> 8) & 255;
+        const b = color & 255;
+        const cX = i - (sprite[j].length / 2);
+        const cY = j - (sprite.length / 2);
+        // Rotate
+        const rad = degree * Math.PI / 180;
+        const x_rotated = Math.round(cX * Math.cos(rad) - cY * Math.sin(rad));
+        const y_rotated = Math.round(cX * Math.sin(rad) + cY * Math.cos(rad));
 
-        </div>
-    </section>
+        // Scale
+        const x_rotated_scaled = Math.round(x_rotated * scaleX);
+        const y_rotated_scaled = Math.round(y_rotated * scaleY);
 
+        drawEllipse(x + x_rotated_scaled, y + y_rotated_scaled, Math.round(scaleX), Math.round(scaleY), r, g, b,);
+      }
+    }
+  }
+}
+function toScaledMousePos(posX, posY) {
+  const rect = canvas.getBoundingClientRect();
+  const scaleX = canvas.width / rect.width;
+  const scaleY = canvas.height / rect.height;
+  return {
+    x: Math.floor((posX - rect.left) * scaleX),
+    y: Math.floor((posY - rect.top) * scaleY)
+  };
+}
+const spaceInvaderSprite = [
+    [0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1],
+    [0, 1, 1, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 1, 1],
+    [0, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1],
+    [0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1],
+    [0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1],
+    [0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1],
+    [0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1],
+    [0, 1, 1, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 1, 1, 0],
+    [1, 0, 1, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1, 1, 0, 1],
+    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+    [1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1],
+    [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
+    [0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0],
+    [0, 0, 0, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 0, 0, 0],
+    [0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0],
+];
+const SusSprite = [
+    [0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0],
+    [0, 1, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0],
+    [1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0],
+    [1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0],
+    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0],
+    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0],
+    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0],
+    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0],
+    [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 1, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 1, 1, 1, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0],
+    [0, 0, 0, 1, 1, 1, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0],
+  ];
+const smileSprite = 
+   [
+    [0, 0, 1, 1, 1, 1, 0, 0],
+    [0, 1, 0, 0, 0, 0, 1, 0],
+    [1, 0, 1, 0, 0, 1, 0, 1],
+    [1, 0, 0, 0, 0, 0, 0, 1],
+    [1, 0, 1, 0, 0, 1, 0, 1],
+    [1, 0, 0, 1, 1, 0, 0, 1],
+    [0, 1, 0, 0, 0, 0, 1, 0],
+    [0, 0, 1, 1, 1, 1, 0, 0],
+   ];
+
+const smileSprite24Bit = [
+  [null,       null,       0xB45309, 0xD97706, 0xD97706, 0xB45309, null,       null      ],
+  [null,       0xD97706,   0xFDE047, 0xFEF08A, 0xFEF08A, 0xFDE047, 0xD97706, null      ],
+  [0xB45309,   0xFDE047,   0x111827, 0xFDE047, 0xFDE047, 0x111827, 0xFDE047, 0xB45309  ],
+  [0xD97706,   0xFEF08A,   0x111827, 0xFEF08A, 0xFEF08A, 0x111827, 0xFEF08A, 0xD97706  ],
+  [0xD97706,   0xFDE047,   0xFDE047, 0xFDE047, 0xFDE047, 0xFDE047, 0xFDE047, 0xD97706  ],
+  [0xB45309,   0xFDE047,   0x111827, 0xFDE047, 0xFDE047, 0x111827, 0xFDE047, 0xB45309  ],
+  [null,       0xD97706,   0xFDE047, 0x111827, 0x111827, 0xFDE047, 0xD97706, null      ],
+  [null,       null,       0xB45309, 0xD97706, 0xD97706, 0xB45309, null,       null      ],
+];
+
+const NaiQuagsireSprite24Bit = [
+    [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null],
+    [null, null, null, null, null, null, null, null, 0x216A7A, 0x216A7A, 0x216A7A, 0x216A7A, 0x216A7A, 0x216A7A, 0x216A7A, 0x216A7A, null, null, null, null, null, null, null, null],
+    [null, null, null, null, null, null, null, 0x216A7A, 0x6ACCD6, 0x6ACCD6, 0x6ACCD6, 0x6ACCD6, 0xD1F2F2, 0xD1F2F2, 0x6ACCD6, 0x6ACCD6, 0x216A7A, null, null, null, null, null, null, null],
+    [null, null, null, null, null, null, 0x216A7A, 0x6ACCD6, 0x6ACCD6, 0x6ACCD6, 0x6ACCD6, 0xD1F2F2, 0xD1F2F2, 0xD1F2F2, 0x6ACCD6, 0x6ACCD6, 0x6ACCD6, 0x216A7A, null, null, null, null, null, null],
+    [null, null, null, null, null, 0x216A7A, 0x6ACCD6, 0x6ACCD6, 0x6ACCD6, 0x6ACCD6, 0x6ACCD6, 0x6ACCD6, 0x6ACCD6, 0x6ACCD6, 0x6ACCD6, 0x6ACCD6, 0x6ACCD6, 0x6ACCD6, 0x216A7A, null, null, null, null, null],
+    [null, null, null, null, null, 0x216A7A, 0x6ACCD6, 0x6ACCD6, 0x6ACCD6, 0x222222, 0x6ACCD6, 0x6ACCD6, 0x6ACCD6, 0x6ACCD6, 0x222222, 0x6ACCD6, 0x6ACCD6, 0x6ACCD6, 0x216A7A, null, null, null, null, null],
+    [null, null, null, null, null, 0x216A7A, 0x6ACCD6, 0x6ACCD6, 0x6ACCD6, 0x6ACCD6, 0x6ACCD6, 0x6ACCD6, 0x6ACCD6, 0x6ACCD6, 0x6ACCD6, 0x6ACCD6, 0x6ACCD6, 0x6ACCD6, 0x216A7A, null, null, null, null, null],
+    [null, null, null, null, null, 0x216A7A, 0x6ACCD6, 0x6ACCD6, 0x48A0AB, 0x222222, 0x222222, 0x222222, 0x222222, 0x222222, 0x222222, 0x48A0AB, 0x6ACCD6, 0x6ACCD6, 0x216A7A, null, null, null, null, null],
+    [null, null, null, null, null, null, 0x216A7A, 0x6ACCD6, 0x48A0AB, 0x48A0AB, 0x6ACCD6, 0x6ACCD6, 0x6ACCD6, 0x6ACCD6, 0x48A0AB, 0x48A0AB, 0x6ACCD6, 0x216A7A, null, null, null, null, null, null],
+    [null, null, null, null, null, null, 0x216A7A, 0x48A0AB, 0x48A0AB, 0x48A0AB, 0x48A0AB, 0x48A0AB, 0x48A0AB, 0x48A0AB, 0x48A0AB, 0x48A0AB, 0x48A0AB, 0x216A7A, null, null, null, null, null, null],
+    [null, null, null, 0x216A7A, 0x216A7A, null, 0x216A7A, 0x48A0AB, 0x6ACCD6, 0x6ACCD6, 0xF7EBB5, 0xF7EBB5, 0xF7EBB5, 0xF7EBB5, 0x6ACCD6, 0x6ACCD6, 0x48A0AB, 0x216A7A, null, 0x216A7A, 0x216A7A, null, null, null],
+    [null, null, 0x216A7A, 0x6ACCD6, 0x6ACCD6, 0x216A7A, 0x216A7A, 0x6ACCD6, 0x6ACCD6, 0xF7EBB5, 0xF7EBB5, 0xF7EBB5, 0xF7EBB5, 0xF7EBB5, 0xF7EBB5, 0x6ACCD6, 0x6ACCD6, 0x216A7A, 0x216A7A, 0x6ACCD6, 0x6ACCD6, 0x216A7A, null, null],
+    [null, 0x216A7A, 0x6ACCD6, 0x6ACCD6, 0x6ACCD6, 0x6ACCD6, 0x216A7A, 0x6ACCD6, 0xF7EBB5, 0xF7EBB5, 0xF7EBB5, 0xF7EBB5, 0xF7EBB5, 0xF7EBB5, 0xF7EBB5, 0xF7EBB5, 0x6ACCD6, 0x216A7A, 0x6ACCD6, 0x6ACCD6, 0x6ACCD6, 0x6ACCD6, 0x216A7A, null],
+    [null, 0x216A7A, 0x6ACCD6, 0x6ACCD6, 0x48A0AB, 0x48A0AB, 0x216A7A, 0x6ACCD6, 0xF7EBB5, 0xF7EBB5, 0xF7EBB5, 0xD6B86C, 0xD6B86C, 0xF7EBB5, 0xF7EBB5, 0xF7EBB5, 0x6ACCD6, 0x216A7A, 0x48A0AB, 0x48A0AB, 0x6ACCD6, 0x6ACCD6, 0x216A7A, null],
+    [null, 0x216A7A, 0x48A0AB, 0x48A0AB, 0x48A0AB, 0x216A7A, 0x216A7A, 0x6ACCD6, 0xF7EBB5, 0xF7EBB5, 0xD6B86C, 0xD6B86C, 0xD6B86C, 0xD6B86C, 0xF7EBB5, 0xF7EBB5, 0x6ACCD6, 0x216A7A, 0x216A7A, 0x48A0AB, 0x48A0AB, 0x48A0AB, 0x216A7A, null],
+    [null, null, 0x216A7A, 0x216A7A, 0x216A7A, null, 0x216A7A, 0x48A0AB, 0x6ACCD6, 0xF7EBB5, 0xD6B86C, 0xD6B86C, 0xD6B86C, 0xD6B86C, 0xF7EBB5, 0x6ACCD6, 0x48A0AB, 0x216A7A, null, 0x216A7A, 0x216A7A, 0x216A7A, null, null],
+    [null, null, null, null, null, null, null, 0x216A7A, 0x48A0AB, 0x6ACCD6, 0x6ACCD6, 0xF7EBB5, 0xF7EBB5, 0x6ACCD6, 0x6ACCD6, 0x48A0AB, 0x216A7A, 0x216A7A, null, null, null, null, null, null],
+    [null, null, null, null, null, null, null, 0x216A7A, 0x48A0AB, 0x48A0AB, 0x6ACCD6, 0x6ACCD6, 0x6ACCD6, 0x6ACCD6, 0x48A0AB, 0x48A0AB, 0x216A7A, 0x72549E, 0x216A7A, null, null, null, null, null],
+    [null, null, null, null, null, null, null, null, 0x216A7A, 0x48A0AB, 0x48A0AB, 0x48A0AB, 0x48A0AB, 0x48A0AB, 0x48A0AB, 0x216A7A, 0x6ACCD6, 0x72549E, 0x72549E, 0x216A7A, null, null, null, null],
+    [null, null, null, null, null, null, null, null, null, 0x216A7A, 0x216A7A, 0x216A7A, 0x216A7A, 0x216A7A, 0x216A7A, 0x216A7A, 0x6ACCD6, 0x6ACCD6, 0x216A7A, null, null, null, null, null],
+    [null, null, null, null, null, null, null, null, 0x216A7A, 0x6ACCD6, 0x6ACCD6, 0x216A7A, null, 0x216A7A, 0x6ACCD6, 0x6ACCD6, 0x216A7A, 0x216A7A, null, null, null, null, null, null],
+    [null, null, null, null, null, null, null, null, 0x216A7A, 0x48A0AB, 0x48A0AB, 0x216A7A, null, 0x216A7A, 0x48A0AB, 0x48A0AB, 0x216A7A, null, null, null, null, null, null, null],
+    [null, null, null, null, null, null, null, null, null, 0x216A7A, 0x216A7A, null, null, null, 0x216A7A, 0x216A7A, null, null, null, null, null, null, null, null],
+    [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null]
+  ];
+let isDragging = false; 
+let previousX = 0;
+let previousY = 0;
+// let mouseX = 0;
+// let mouseY = 0;
+let r = 0, g = 0, b = 0, a = 255; // Default color
+let degree = 0;
+let scale = 1;
+let spriteX = 100 ;
+let spriteY = 100;
+
+canvas.addEventListener('click', (event) => {
+
+});
+
+canvas.addEventListener('mousedown', (event) => {
+  isDragging = true;
+  console.log('Mouse down', event.offsetX, event.offsetY);
+});
+
+canvas.addEventListener('mouseup', (event) => {
+  isDragging = false;
+  console.log('Mouse up', event.offsetX, event.offsetY);
+});
+
+canvas.addEventListener('mousemove', (event) => {
+
+  const { x, y } = toScaledMousePos(event.clientX, event.clientY);
+  // mouseX = x;
+  // mouseY = y;
+  if(isDragging) {
+    drawLine(previousX, previousY, x, y, r, g, b); // Draw a line from previous position to current position with the current color
+    putPixel(x, y, r, g, b); // Draw a pixel at current position with the current color
+    ctx.putImageData(imageData, 0, 0);
+  }
+  previousX = x;
+  previousY = y;
+});
+
+window.addEventListener('keydown', (event) => {
+  console.log('Key down:', event.key);
+  if(event.key === '1') {
+    r = 255; g = 0; b = 0; // Change to red
+  }
+  else if(event.key === '2') {
+    r = 0; g = 255; b = 0; // Change to green
+  }
+  else if(event.key === '3') {
+    r = 0; g = 0; b = 255; // Change to blue
+  }
+  else if(event.key === '4') {
+    degree += 1;
+  }
+  else if(event.key === '6') {
+    degree -= 1;
+  }
+  else if(event.key === '+') {
+    scale += 0.1;
+  }
+  else if(event.key === '-') {
+    scale -= 0.1;
+  }
+  // TRANSLATE
+  else if(event.code === 'KeyW' || event.key === 'ArrowUp') {
+    spriteY -= 5;
+  }
+  else if(event.code === 'KeyS' || event.key === 'ArrowDown') {
+    spriteY += 5;
+  }
+  else if(event.code === 'KeyA' || event.key === 'ArrowLeft') {
+    spriteX -= 5;
+  }
+  else if(event.code === 'KeyD' || event.key === 'ArrowRight') {
+    spriteX += 5;
+
+  }
+
+});
+window.addEventListener('keyup', (event) => {
+  console.log('Key up:', event.key);
+});
+
+//drawSprite(spaceInvaderSprite, 100, 100, 0, 255, 255); // Draw a cyan space invader sprite
+//drawSpriteRotate(spaceInvaderSprite, 100, 100, 60, 0, 255, 255); // Draw a cyan space invader sprite
+//drawSpriteRotateScale(SusSprite, 100, 100, degree, scale, scale, 0, 0, 255);
+ctx.putImageData(imageData, 0, 0);
+
+function animate() {
+  drawRectFilled(0, 0, canvas.width - 1, canvas.height - 1, 255, 255, 255); // Clear the canvas with black
+  
+  //degree += 1; // Increase rotation degree
+  drawSprite24Bit(NaiQuagsireSprite24Bit, spriteX, spriteY, degree, scale, scale);
+  if (spriteY < 0) {
+    spriteY = canvas.height; 
+  } 
+  else if (spriteY > canvas.height) {
+    spriteY = 0;            
+  }
+  //drawSpriteRotateScale(SusSprite, 100, 100, degree, scale, scale, 0, 0, 255); // Draw a cyan space invader sprite
+  ctx.putImageData(imageData, 0, 0);
+  requestAnimationFrame(animate);
+}
+animate();
+
+</script>
 </body>
 </html>
