@@ -80,6 +80,17 @@
             text-align: left;
         }
 
+        /* เพิ่ม CSS สำหรับหัวข้อด้านบนชื่อที่ขอเข้ามาใหม่ */
+        .hero .course-title {
+            display: block;
+            font-size: 1.15rem;
+            font-weight: 600;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 15px;
+        }
+
         .hero h1 {
             font-size: 3.5rem;
             font-weight: 600;
@@ -238,7 +249,7 @@
             background-color: var(--accent);
         }
 
-        /* ดีไซน์ส่วน Action Card สำหรับ Source Code ที่ปรับให้เข้ากับเว็บ */
+        /* ดีไซน์ส่วน Action Card สำหรับ Source Code */
         .source-card-container {
             width: 100%;
             display: flex;
@@ -277,7 +288,7 @@
             line-height: 1.6;
         }
 
-        /* ปุ่มแบบโปร่ง (Outline Button) สไตล์คลีนๆ */
+        /* ปุ่มแบบโปร่ง (Outline Button) */
         .btn-outline {
             display: inline-flex;
             align-items: center;
@@ -323,6 +334,9 @@
 
     <section id="profile" class="section hero">
         <div class="content-wrapper">
+            <!-- ส่วนที่เพิ่มใหม่: หัวข้อตามที่วาดไว้ในภาพ -->
+            <span class="course-title">Interactive Computer Graphics</span>
+            
             <h1>Srithep - Jinadit</h1>
             <p>Computer Science Student & Web Developer</p>
             <p style="margin-top: 20px; font-size: 1rem;">
@@ -383,7 +397,6 @@
                         </div>
                     </div>
 
-                    <!-- อัปเดตลิงก์ View Source Code แล้ว -->
                     <a href="https://github.com/orangejuice68/orangejuice68.github.io/blob/main/800-1815-raster.html" target="_blank" class="btn-link">View Source Code</a>
                 </div>
 
@@ -393,14 +406,12 @@
 
             </div>
 
-            <!-- ส่วน Source Code Card ที่ปรับดีไซน์ใหม่ให้เข้ากับธีมเว็บ -->
             <div class="source-card-container">
                 <div class="action-card">
                     <h3>Explore Source Code</h3>
                     <p>Click the button below to view the raw project file and explore the full computer graphics logic on GitHub Pages.</p>
                     
-                    <!-- อัปเดตลิงก์ Open GitHub Pages แล้ว -->
-                    <a href="https://github.com/orangejuice68/orangejuice68.github.io" target="_blank" class="btn-outline">
+                    <a href="https://github.com/orangejuice68?tab=repositories" target="_blank" class="btn-outline">
                         Open GitHub Pages
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
