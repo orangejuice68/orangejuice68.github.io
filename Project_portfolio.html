@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Supermarket 3D - Trophy Phong Shader & Cel Bush</title>
+  <style>
+    html, body { height: 100%; margin: 0; overflow: hidden; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+    canvas { display: block; }
+
+    /* Debug Panel */
+    #debug-panel {
+      position: absolute;
+      top: 15px;
+      left: 15px;
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      padding: 12px 16px;
+      color: #38bdf8;
+      font-family: monospace;
+      font-size: 13px;
+      line-height: 1.6;
+      pointer-events: none;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+      user-select: none;
+    }
+
+    /* Light Control Panel */
+    #light-panel {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      padding: 14px 18px;
+      color: #f8fafc;
+      font-size: 13px;
+      width: 220px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+      z-index: 10;
+    }
+
+    #light-panel .panel-title {
+      font-weight: bold;
+      color: #f59e0b;
+      margin-bottom: 10px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      padding-bottom: 5px;
+    }
+
+    .control-group {
+      margin-bottom: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .control-group label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      color: #cbd5e1;
+    }
+
+    .control-group input[type="range"] {
+      width: 100%;
+      cursor: pointer;
+      accent-color: #f59e0b;
+    }
+
+    /* UI Container */
+    #ui-container {
+      position: absolute;
+      bottom: 20px;
+      right: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 10px;
+      z-index: 10;
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .nav-btn {
+      background: #ffffff;
+      color: #1e293b;
+      border: none;
+      padding: 9px 16px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+      transition: all 0.25s ease;
+    }
+
+    .nav-btn:hover {
+      background: #f1f5f9;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 14px rgba(0, 0, 0, 0.3);
+    }
+
+    .nav-btn:active {
+      transform: translateY(0);
+    }
+
+    #toggle-mode-btn {
+      background: #f59e0b;
+      color: #ffffff;
+    }
+
+    #toggle-mode-btn:hover {
+      background: #d97706;
+    }
+  </style>
+
+  <!-- Three.js Libraries -->
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+</head>
+<body>
+
+  <!-- Debug Panel -->
+  <div id="debug-panel">
+    <div id="cam-pos">📷 Camera: { x: 0, y: 0, z: 0 }</div>
+    <div id="target-pos">🎯 Target: { x: 0, y: 0, z: 0 }</div>
+  </div>
+
+  <!-- Light Control Panel -->
+  <div id="light-panel">
+    <div class="panel-title">💡 ปรับแต่งแสง (Lighting)</div>
+    
+    <div class="control-group">
+      <label>แสงรอบข้าง (Ambient): <span id="val-ambient">0.8</span></label>
+      <input type="range" id="slider-ambient" min="0" max="2" step="0.05" value="0.8">
+    </div>
+
+    <div class="control-group">
+      <label>แสงอาทิตย์ (Directional): <span id="val-dir">1.2</span></label>
+      <input type="range" id="slider-dir" min="0" max="3" step="0.05" value="1.2">
+    </div>
+
+    <div class="control-group">
+      <label>แสงไฟในร้าน (Interior): <span id="val-interior">0.5</span></label>
+      <input type="range" id="slider-interior" min="0" max="5" step="0.1" value="0.5">
+    </div>
+
+    <div class="control-group">
+      <label>ทิศทางแสง (Sun X): <span id="val-sunx">8</span></label>
+      <input type="range" id="slider-sunx" min="-30" max="30" step="1" value="8">
+    </div>
+  </div>
+
+  <!-- UI Buttons Navigation -->
+  <div id="ui-container">
+    <div class="btn-group">
+      <button class="nav-btn" id="toggle-mode-btn" onclick="toggleDayNight()">☀️ โหมดกลางวัน</button>
+    </div>
+    <div class="btn-group">
+      <button class="nav-btn" onclick="setView('overview')">Overview</button>
+      <button class="nav-btn" onclick="setView('shelves')">Shelves</button>
+      <button class="nav-btn" onclick="setView('fridge')">Fridge</button>
+      <button class="nav-btn" onclick="setView('cashier')">Cashier</button>
+      <button class="nav-btn" onclick="setView('profile')">Profile</button>
+      <button class="nav-btn" onclick="setView('Aboutme')">Aboutme</button>
+      <button class="nav-btn" onclick="setView('Project1')">Project1</button>
+      <button class="nav-btn" onclick="setView('Project2')">Project2</button>
+      <button class="nav-btn" onclick="setView('Project3')">Project3</button>
+      <button class="nav-btn" onclick="setView('Portfolio')">Portfolio</button>
+    </div>
+  </div>
+
+<script>
+  // ==========================================
+  // 1. Scene / Camera / Renderer Setup
+  // ==========================================
+  const scene = new THREE.Scene();
+  
+  const dayBgColor = new THREE.Color(0xdbeafe);
+  const nightBgColor = new THREE.Color(0x0f172a);
+  scene.background = dayBgColor.clone();
+
+  const camera = new THREE.PerspectiveCamera(60, innerWidth / innerHeight, 0.01, 1000);
+  camera.position.set(6.02, 2.53, -0.65);
+
+  const renderer = new THREE.WebGLRenderer({ antialias: true });
+  renderer.setSize(innerWidth, innerHeight);
+  renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+  document.body.appendChild(renderer.domElement);
+
+  const controls = new THREE.OrbitControls(camera, renderer.domElement);
+  controls.enableDamping = true;
+  controls.dampingFactor = 0.05;
+  controls.screenSpacePanning = true;
+  controls.zoomSpeed = 1.2;            
+  controls.rotateSpeed = 0.8;          
+  controls.minDistance = 0.1; 
+  controls.maxDistance = 200;  
+  controls.target.set(3.04, 1.88, -0.71);
+
+  // ==========================================
+  // 2. Lighting Setup
+  // ==========================================
+  const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
+  scene.add(ambientLight);
+
+  const dirLight = new THREE.DirectionalLight(0xfffbeb, 1.2);
+  dirLight.position.set(8, 15, 10);
+  scene.add(dirLight);
+
+  const interiorLight = new THREE.PointLight(0xffedd5, 0.5, 20);
+  interiorLight.position.set(0, 5, 0);
+  scene.add(interiorLight);
+
+  // อาร์เรย์เก็บ Shader Materials ทั้งหมดเพื่อใช้การอัปเดตแสง
+  const customMaterials = [];
+
+  // ==========================================
+  // 3. Anime Cel Shader (สำหรับต้นไม้/พุ่มไม้)
+  // ==========================================
+  function createCelMaterial(baseColorHex) {
+    const mat = new THREE.ShaderMaterial({
+      uniforms: {
+        uBaseColor: { value: new THREE.Color(baseColorHex) },
+        uDirLightPos: { value: dirLight.position },
+        uDirLightColor: { value: dirLight.color },
+        uDirLightIntensity: { value: dirLight.intensity },
+        uAmbientColor: { value: ambientLight.color },
+        uAmbientIntensity: { value: ambientLight.intensity }
+      },
+      vertexShader: `
+        varying vec3 vNormal;
+        void main() {
+          vNormal = normalize(normalMatrix * normal);
+          gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+        }
+      `,
+      fragmentShader: `
+        uniform vec3 uBaseColor;
+        uniform vec3 uDirLightPos;
+        uniform float uDirLightIntensity;
+        uniform float uAmbientIntensity;
+
+        varying vec3 vNormal;
+
+        void main() {
+          vec3 N = normalize(vNormal);
+          vec3 L = normalize(uDirLightPos);
+          float NdotL = dot(N, L);
+
+          vec3 shadow = uBaseColor * 0.5;
+          vec3 highlight = uBaseColor * 1.2;
+
+          vec3 col;
+          if (NdotL > 0.3) {
+            col = highlight;
+          } else if (NdotL > -0.2) {
+            col = uBaseColor;
+          } else {
+            col = shadow;
+          }
+
+          float lightFactor = clamp(uAmbientIntensity * 0.5 + uDirLightIntensity * 0.5, 0.3, 1.3);
+          gl_FragColor = vec4(col * lightFactor, 1.0);
+        }
+      `
+    });
+    customMaterials.push(mat);
+    return mat;
+  }
+
+  // ==========================================
+  // 4. Custom Phong Shader (สำหรับถ้วยรางวัล Trophies)
+  // ==========================================
+  function createPhongMaterial(diffuseHex, specularHex = 0xffffff, shininess = 128.0) {
+    const mat = new THREE.ShaderMaterial({
+      uniforms: {
+        uDiffuseColor: { value: new THREE.Color(diffuseHex) },
+        uSpecularColor: { value: new THREE.Color(specularHex) },
+        uShininess: { value: shininess },
+        uDirLightPos: { value: dirLight.position },
+        uDirLightColor: { value: dirLight.color },
+        uDirLightIntensity: { value: dirLight.intensity },
+        uAmbientColor: { value: ambientLight.color },
+        uAmbientIntensity: { value: ambientLight.intensity }
+      },
+      vertexShader: `
+        varying vec3 vNormal;
+        varying vec3 vViewPosition;
+        void main() {
+          vNormal = normalize(normalMatrix * normal);
+          vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
+          vViewPosition = mvPosition.xyz;
+          gl_Position = projectionMatrix * mvPosition;
+        }
+      `,
+      fragmentShader: `
+        uniform vec3 uDiffuseColor;
+        uniform vec3 uSpecularColor;
+        uniform float uShininess;
+        uniform vec3 uDirLightPos;
+        uniform vec3 uDirLightColor;
+        uniform float uDirLightIntensity;
+        uniform vec3 uAmbientColor;
+        uniform float uAmbientIntensity;
+
+        varying vec3 vNormal;
+        varying vec3 vViewPosition;
+
+        void main() {
+          vec3 N = normalize(vNormal);
+          vec3 L = normalize(uDirLightPos);
+          vec3 V = normalize(-vViewPosition);
+
+          // Ambient Component
+          vec3 ambient = uAmbientColor * uAmbientIntensity * uDiffuseColor;
+
+          // Diffuse Component (Lambertian)
+          float NdotL = max(dot(N, L), 0.0);
+          vec3 diffuse = uDirLightColor * uDirLightIntensity * uDiffuseColor * NdotL;
+
+          // Specular Component (Phong Reflection Model)
+          vec3 R = reflect(-L, N);
+          float RdotV = max(dot(R, V), 0.0);
+          float specFactor = pow(RdotV, uShininess);
+          vec3 specular = uDirLightColor * uDirLightIntensity * uSpecularColor * specFactor;
+
+          // Final Combined Color
+          vec3 finalColor = ambient + diffuse + specular;
+          gl_FragColor = vec4(finalColor, 1.0);
+        }
+      `
+    });
+    customMaterials.push(mat);
+    return mat;
+  }
+
+  // Material สำหรับเส้นขอบดำ (Outline)
+  const outlineMaterial = new THREE.ShaderMaterial({
+    uniforms: { uOutlineWidth: { value: 0.006 } },
+    vertexShader: `
+      uniform float uOutlineWidth;
+      void main() {
+        vec3 newPos = position + normal * uOutlineWidth;
+        gl_Position = projectionMatrix * modelViewMatrix * vec4(newPos, 1.0);
+      }
+    `,
+    fragmentShader: `
+      void main() { gl_FragColor = vec4(0.08, 0.08, 0.08, 1.0); }
+    `,
+    side: THREE.BackSide
+  });
+
+  function updateAllShaderUniforms() {
+    customMaterials.forEach(mat => {
+      if (mat.uniforms) {
+        mat.uniforms.uDirLightPos.value.copy(dirLight.position);
+        mat.uniforms.uDirLightColor.value.copy(dirLight.color);
+        mat.uniforms.uDirLightIntensity.value = dirLight.intensity;
+        mat.uniforms.uAmbientColor.value.copy(ambientLight.color);
+        mat.uniforms.uAmbientIntensity.value = ambientLight.intensity;
+      }
+    });
+  }
+
+  // ==========================================
+  // 5. Ceiling Fan Shader
+  // ==========================================
+  const fanMaterial = new THREE.ShaderMaterial({
+    uniforms: { uTime: { value: 0 } },
+    vertexShader: `
+      uniform float uTime;
+      varying vec2 vUv;
+      void main() {
+        vUv = uv;
+        vec3 pos = position;
+        float angle = uTime * 8.0; 
+        float c = cos(angle);
+        float s = sin(angle);
+        mat2 rot = mat2(c, -s, s, c);
+        pos.xz = rot * pos.xz;
+        pos.y += sin(length(pos.xz) * 4.0 + uTime * 6.0) * 0.015;
+        gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
+      }
+    `,
+    fragmentShader: `
+      varying vec2 vUv;
+      void main() { gl_FragColor = vec4(0.2, 0.22, 0.25, 1.0); }
+    `,
+    side: THREE.DoubleSide
+  });
+
+  const fanGroup = new THREE.Group();
+  const poleGeo = new THREE.CylinderGeometry(0.03, 0.03, 0.6, 16);
+  const poleMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, metalness: 0.8, roughness: 0.2 });
+  const poleMesh = new THREE.Mesh(poleGeo, poleMat);
+  poleMesh.position.set(0, -0.3, 0);
+  fanGroup.add(poleMesh);
+
+  const capGeo = new THREE.CylinderGeometry(0.18, 0.18, 0.12, 16);
+  const capMesh = new THREE.Mesh(capGeo, poleMat);
+  capMesh.position.set(0, -0.6, 0);
+  fanGroup.add(capMesh);
+
+  const bladeGeo1 = new THREE.BoxGeometry(1.8, 0.02, 0.22, 16, 1, 16);
+  const bladeGeo2 = new THREE.BoxGeometry(0.22, 0.02, 1.8, 16, 1, 16);
+  const bladeMesh1 = new THREE.Mesh(bladeGeo1, fanMaterial);
+  const bladeMesh2 = new THREE.Mesh(bladeGeo2, fanMaterial);
+  bladeMesh1.position.set(0, -0.62, 0);
+  bladeMesh2.position.set(0, -0.62, 0);
+
+  fanGroup.add(bladeMesh1);
+  fanGroup.add(bladeMesh2);
+  fanGroup.position.set(0, 4.2, -0.5);
+  scene.add(fanGroup);
+
+  // ==========================================
+  // 6. ☁️ Dynamic Moving 3D Clouds System (ระบบเมฆเคลื่อนที่)
+  // ==========================================
+  const cloudsGroup = new THREE.Group();
+  const cloudsArray = [];
+
+  const cloudMaterial = new THREE.MeshStandardMaterial({
+    color: 0xf8fafc,
+    roughness: 0.9,
+    metalness: 0.1,
+    flatShading: true
+  });
+
+  function createCloud() {
+    const cloud = new THREE.Group();
+    const puffGeo = new THREE.DodecahedronGeometry(1, 1);
+    const numPuffs = 5 + Math.floor(Math.random() * 4);
+
+    for (let i = 0; i < numPuffs; i++) {
+      const puff = new THREE.Mesh(puffGeo, cloudMaterial);
+      puff.position.set(
+        (Math.random() - 0.5) * 2.5,
+        (Math.random() - 0.5) * 0.8,
+        (Math.random() - 0.5) * 1.8
+      );
+      const scale = 0.8 + Math.random() * 0.8;
+      puff.scale.set(scale, scale, scale);
+      cloud.add(puff);
+    }
+    return cloud;
+  }
+
+  const numClouds = 14;
+  for (let i = 0; i < numClouds; i++) {
+    const cloud = createCloud();
+    const posX = (Math.random() - 0.5) * 70;
+    const posY = 12 + Math.random() * 8;
+    const posZ = (Math.random() - 0.5) * 70;
+    cloud.position.set(posX, posY, posZ);
+
+    const scale = 1 + Math.random() * 1.5;
+    cloud.scale.set(scale, scale, scale);
+    
+    cloud.userData.speed = 0.02 + Math.random() * 0.03;
+
+    cloudsGroup.add(cloud);
+    cloudsArray.push(cloud);
+  }
+
+  scene.add(cloudsGroup);
+
+  function updateClouds() {
+    cloudsArray.forEach((cloud) => {
+      cloud.position.x += cloud.userData.speed;
+      if (cloud.position.x > 35) {
+        cloud.position.x = -35;
+        cloud.position.z = (Math.random() - 0.5) * 70;
+      }
+    });
+  }
+
+  // ==========================================
+  // 7. Light Control Panel Listeners
+  // ==========================================
+  const sliderAmbient = document.getElementById('slider-ambient');
+  const sliderDir = document.getElementById('slider-dir');
+  const sliderInterior = document.getElementById('slider-interior');
+  const sliderSunX = document.getElementById('slider-sunx');
+
+  sliderAmbient.addEventListener('input', (e) => {
+    const val = parseFloat(e.target.value);
+    ambientLight.intensity = val;
+    document.getElementById('val-ambient').innerText = val;
+    updateAllShaderUniforms();
+  });
+
+  sliderDir.addEventListener('input', (e) => {
+    const val = parseFloat(e.target.value);
+    dirLight.intensity = val;
+    document.getElementById('val-dir').innerText = val;
+    updateAllShaderUniforms();
+  });
+
+  sliderInterior.addEventListener('input', (e) => {
+    const val = parseFloat(e.target.value);
+    interiorLight.intensity = val;
+    document.getElementById('val-interior').innerText = val;
+  });
+
+  sliderSunX.addEventListener('input', (e) => {
+    const val = parseFloat(e.target.value);
+    dirLight.position.x = val;
+    document.getElementById('val-sunx').innerText = val;
+    updateAllShaderUniforms();
+  });
+
+  // ==========================================
+  // 8. Day/Night Toggle System
+  // ==========================================
+  let isNight = false;
+
+  function toggleDayNight() {
+    isNight = !isNight;
+    const btn = document.getElementById('toggle-mode-btn');
+
+    if (isNight) {
+      btn.innerHTML = '🌙 โหมดกลางคืน';
+      btn.style.background = '#3b82f6';
+      scene.background.copy(nightBgColor);
+      ambientLight.intensity = 0.25;
+      dirLight.intensity = 0.2;
+      dirLight.color.setHex(0x93c5fd); 
+      interiorLight.intensity = 1.2;    
+      cloudMaterial.color.setHex(0x334155); // เปลี่ยนเมฆเป็นสีเทาเข้มโหมดกลางคืน
+    } else {
+      btn.innerHTML = '☀️ โหมดกลางวัน';
+      btn.style.background = '#f59e0b';
+      scene.background.copy(dayBgColor);
+      ambientLight.intensity = 0.8;
+      dirLight.intensity = 1.2;
+      dirLight.color.setHex(0xfffbeb); 
+      interiorLight.intensity = 0.5;
+      cloudMaterial.color.setHex(0xf8fafc); // เปลี่ยนเมฆเป็นสีขาวโหมดกลางวัน
+    }
+
+    sliderAmbient.value = ambientLight.intensity;
+    document.getElementById('val-ambient').innerText = ambientLight.intensity;
+    sliderDir.value = dirLight.intensity;
+    document.getElementById('val-dir').innerText = dirLight.intensity;
+    sliderInterior.value = interiorLight.intensity;
+    document.getElementById('val-interior').innerText = interiorLight.intensity;
+
+    updateAllShaderUniforms();
+  }
+
+  // ==========================================
+  // 9. Smooth Camera Transition
+  // ==========================================
+  const views = {
+    overview: { cam: new THREE.Vector3(6.02, 2.53, -0.65),   target: new THREE.Vector3(3.04, 1.88, -0.71) },
+    shelves:  { cam: new THREE.Vector3(0.94, 2.59, -2.39),   target: new THREE.Vector3(0.71, 0.33, 2) },
+    fridge:   { cam: new THREE.Vector3(-0.38, 4.06, 0.39),   target: new THREE.Vector3(-3.25, 1.72 , 0.30) },
+    cashier:  { cam: new THREE.Vector3(1.02, 1.38, 1.16),    target: new THREE.Vector3(1.01, 1.30, -1.06) },
+    profile:  { cam: new THREE.Vector3(-0.74, 3.04, -2.06),   target: new THREE.Vector3(-0.73, 2.89, -3.43) },
+    Aboutme:  { cam: new THREE.Vector3(1.14, 1.80, -1.25),   target: new THREE.Vector3(1.60, 2.05, -3.43) },
+    Project1: { cam: new THREE.Vector3(2.21, 2.32, 0.95),    target: new THREE.Vector3(2.21, 1.80, 1.72) },
+    Project2: { cam: new THREE.Vector3(-0.27, 2.29, 0.48),   target: new THREE.Vector3(-0.28, 1.73, 1.69) },
+    Project3: { cam: new THREE.Vector3(-2.53, 2.49, -1.58),  target: new THREE.Vector3(-2.57, 1.82, -2.97) }
+  };
+
+  let isTransitioning = false;
+  let transitionProgress = 0;
+  const startCamPos = new THREE.Vector3();
+  const startTargetPos = new THREE.Vector3();
+  const targetCamPos = new THREE.Vector3();
+  const targetControlsTarget = new THREE.Vector3();
+
+  function setView(viewKey) {
+    if (viewKey === 'Portfolio') {
+      window.open('https://orangejuice68.github.io', '_blank');
+      return;
+    }
+
+    if (views[viewKey]) {
+      startCamPos.copy(camera.position);
+      startTargetPos.copy(controls.target);
+      targetCamPos.copy(views[viewKey].cam);
+      targetControlsTarget.copy(views[viewKey].target);
+      
+      isTransitioning = true;
+      transitionProgress = 0;
+    }
+  }
+
+  controls.addEventListener('start', () => {
+    isTransitioning = false;
+  });
+
+  // ==========================================
+  // 10. Load GLB Model & Apply Phong / Cel Shaders
+  // ==========================================
+  const gltfLoader = new THREE.GLTFLoader();
+
+  gltfLoader.load(
+    "https://raw.githubusercontent.com/orangejuice68/orangejuice68.github.io/main/model/SupermaketModel-final.glb",
+    (gltf) => {
+      const model = gltf.scene;
+
+      model.traverse((child) => {
+        if (child.isMesh) {
+          const name = child.name.toLowerCase();
+          const parentName = child.parent ? child.parent.name.toLowerCase() : '';
+
+          // ตรวจสอบชิ้นส่วนพุ่มไม้ / ต้นไม้
+          const isPlant = name.includes('plant') || name.includes('tree') || name.includes('leaf') || 
+                          name.includes('pot') || name.includes('foliage') || name.includes('bush') ||
+                          parentName.includes('plant') || parentName.includes('tree') || parentName.includes('pot');
+
+          // ตรวจสอบชิ้นส่วนถ้วยรางวัล (Trophies / Cups / Awards)
+          const isTrophy = name.includes('trophy') || name.includes('cup') || name.includes('award') || 
+                           name.includes('prize') || parentName.includes('trophy') || parentName.includes('cup') ||
+                           parentName.includes('award') || parentName.includes('prize');
+
+          if (isPlant) {
+            child.geometry.computeVertexNormals();
+
+            let originalHex = 0x10b981; 
+            if (child.material && child.material.color) {
+              originalHex = child.material.color.getHex();
+            }
+
+            const celMat = createCelMaterial(originalHex);
+            child.material = celMat;
+
+            const col = new THREE.Color(originalHex);
+            const isGreenLeaf = (col.g > col.r && col.g > col.b) || 
+                                name.includes('leaf') || name.includes('bush') || name.includes('tree') || name.includes('foliage');
+
+            if (isGreenLeaf) {
+              const existingOutline = child.children.find(c => c.isOutline);
+              if (existingOutline) child.remove(existingOutline);
+
+              const outlineMesh = new THREE.Mesh(child.geometry, outlineMaterial);
+              outlineMesh.isOutline = true;
+              child.add(outlineMesh);
+            }
+          } 
+          else if (isTrophy) {
+            // คำนวณ Smooth Normals เพื่อให้สะท้อนแสง Phong Specular ลื่นไหลแวววาว
+            child.geometry.computeVertexNormals();
+
+            let origColor = new THREE.Color(0xd4af37);
+            if (child.material && child.material.color) {
+              origColor = child.material.color;
+            }
+
+            // แยกประเภทชิ้นส่วน: ฐานถ้วย / ถ้วยทอง / ถ้วยเงิน
+            const isBase = name.includes('base') || name.includes('stand') || name.includes('cube') ||
+                           (origColor.r < 0.25 && origColor.g < 0.25 && origColor.b < 0.25);
+
+            if (isBase) {
+              // ฐานถ้วย: สีดำ/เทาเข้ม Phong Shader Specular แบบด้าน
+              child.material = createPhongMaterial(0x222222, 0x666666, 16.0);
+            } else {
+              // เช็คว่าเป็นถ้วยทองหรือถ้วยเงิน
+              const isGold = (origColor.r > origColor.b + 0.15) || name.includes('gold') || name.includes('yellow') || child.position.x > 0;
+              
+              if (isGold) {
+                // ถ้วยทอง: Gold Phong Shader พร้อมจุดสะท้อนแสงแวววาวสูง
+                child.material = createPhongMaterial(0xd4af37, 0xfff5cc, 128.0);
+              } else {
+                // ถ้วยเงิน: Silver Phong Shader พร้อมจุดสะท้อนแสงแวววาวสูง
+                child.material = createPhongMaterial(0xc0c0c0, 0xffffff, 128.0);
+              }
+            }
+          }
+        }
+      });
+
+      scene.add(model);
+      updateAllShaderUniforms();
+      console.log("ตั้งค่า Phong Shader สำหรับถ้วยรางวัล และ Cel Shader สำหรับพุ่มไม้เรียบร้อยแล้ว");
+    },
+    undefined,
+    (err) => console.error("เกิดข้อผิดพลาดในการโหลดโมเดล:", err)
+  );
+
+  // ==========================================
+  // 11. Debug Panel & Window Resize
+  // ==========================================
+  const camPosEl = document.getElementById('cam-pos');
+  const targetPosEl = document.getElementById('target-pos');
+
+  window.addEventListener('resize', () => {
+    camera.aspect = innerWidth / innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(innerWidth, innerHeight);
+  });
+
+  window.addEventListener('keydown', (e) => {
+    if (e.key === 'c' || e.key === 'C') {
+      const c = camera.position;
+      const t = controls.target;
+      console.log(`cam: new THREE.Vector3(${c.x.toFixed(2)}, ${c.y.toFixed(2)}, ${c.z.toFixed(2)}), target: new THREE.Vector3(${t.x.toFixed(2)}, ${t.y.toFixed(2)}, ${t.z.toFixed(2)})`);
+    }
+  });
+
+  // ==========================================
+  // 12. Animation Loop
+  // ==========================================
+  function animate() {
+    fanMaterial.uniforms.uTime.value = performance.now() * 0.001;
+
+    // อัปเดตตำแหน่งการขยับลอยของเมฆ
+    updateClouds();
+
+    if (isTransitioning) {
+      transitionProgress += 0.04;
+      if (transitionProgress >= 1) {
+        transitionProgress = 1;
+        isTransitioning = false;
+      }
+      
+      const ease = transitionProgress * (2 - transitionProgress);
+      camera.position.lerpVectors(startCamPos, targetCamPos, ease);
+      controls.target.lerpVectors(startTargetPos, targetControlsTarget, ease);
+    }
+
+    controls.update();
+    renderer.render(scene, camera);
+
+    camPosEl.innerText = `📷 Camera: { x: ${camera.position.x.toFixed(2)}, y: ${camera.position.y.toFixed(2)}, z: ${camera.position.z.toFixed(2)} }`;
+    targetPosEl.innerText = `🎯 Target: { x: ${controls.target.x.toFixed(2)}, y: ${controls.target.y.toFixed(2)}, z: ${controls.target.z.toFixed(2)} }`;
+
+    requestAnimationFrame(animate);
+  }
+
+  requestAnimationFrame(animate);
+</script>
+</body>
+</html>
